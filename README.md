@@ -1,0 +1,1 @@
+# cnpj-extension-privacy
