@@ -1,0 +1,37 @@
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: "removerPontuacao",
+    title: "Copiar só os números",
+    contexts: ["selection"]
+  });
+});
+
+chrome.contextMenus.onClicked.addListener((info) => {
+  if (info.menuItemId === "removerPontuacao") {
+    const texto = info.selectionText || "";
+    const somenteNumeros = texto.replace(/\D/g, "");
+    // Injeta um script na aba ativa para copiar para o clipboard
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.scripting.executeScript({
+        target: { tabId: tabs[0].id },
+        func: (numeros) => {
+          navigator.clipboard.writeText(numeros).then(() => {
+            // Feedback visual temporário
+            const div = document.createElement("div");
+            div.textContent = `✅ Copiado: ${numeros}`;
+            div.style.cssText = `
+              position: fixed; top: 20px; right: 20px; z-index: 999999;
+              background: #1a1a2e; color: #fff; padding: 12px 20px;
+              border-radius: 8px; font-size: 15px; font-family: monospace;
+              box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+              border-left: 4px solid #00d4ff;
+            `;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 2500);
+          });
+        },
+        args: [somenteNumeros]
+      });
+    });
+  }
+});

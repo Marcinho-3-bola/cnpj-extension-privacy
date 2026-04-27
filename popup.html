@@ -1,0 +1,22 @@
+document.getElementById("btn").addEventListener("click", () => {
+  const entrada = document.getElementById("entrada").value;
+  const numeros = entrada.replace(/\D/g, "");
+  document.getElementById("resultado").textContent = numeros;
+
+  if (numeros) {
+    navigator.clipboard.writeText(numeros).then(() => {
+      document.getElementById("msg").textContent = "✅ Copiado para a área de transferência!";
+      setTimeout(() => {
+        document.getElementById("msg").textContent = "";
+      }, 2000);
+    });
+  } else {
+    document.getElementById("msg").textContent = "⚠️ Nenhum número encontrado.";
+  }
+});
+
+// Limpar ao digitar nova entrada
+document.getElementById("entrada").addEventListener("input", () => {
+  document.getElementById("resultado").textContent = "";
+  document.getElementById("msg").textContent = "";
+});
